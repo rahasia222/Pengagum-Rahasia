@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spesial Untukmu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color-light: #ff6a88;
+            --primary-color-dark: #ff9a8b;
+            --card-bg: #fff;
+            --text-color: #555;
+            --progress-color: #ff6a88;
+            --heart-color: #ff6a88;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            overflow: hidden;
+        }
+
+        .photo-card-container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .photo-card {
+            width: 320px;
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            text-align: center;
+            transition: transform 0.4s ease-in-out;
+            position: relative;
+        }
+
+        .photo-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        .photo-card-image {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .photo-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--primary-color-light);
+        }
+
+        .card-subtitle {
+            font-size: 1em;
+            color: #888;
+            margin-bottom: 15px;
+        }
+
+        .audio-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+            align-items: center;
+        }
+
+        .audio-controls button {
+            background: linear-gradient(45deg, var(--primary-color-light), var(--primary-color-dark));
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            outline: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .audio-controls button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            margin-top: 15px;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--progress-color);
+            transition: width 0.1s linear;
+        }
+
+        audio {
+            display: none;
+        }
+
+        /* Animasi Hati */
+        .heart-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            display: none;
+        }
+
+        .heart {
+            position: absolute;
+            bottom: -20px;
+            font-size: 20px;
+            color: var(--heart-color);
+            opacity: 0;
+            transform: translateY(0);
+            animation: floatUp 4s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-200px) scale(1.2);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="photo-card-container">
+        <div class="photo-card">
+            <div class="photo-card-image">
+                <img id="photo" src="my mind.jpg" alt="Special Photo">
+                <div id="heartContainer" class="heart-container"></div>
+            </div>
+            <div class="card-content">
+                <h3 class="card-title">Dari Pengagum Rahasia</h3>
+                <p class="card-subtitle">Kita Dan Ke Tidak kemungkinan  THE RAIN</p>
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                <div class="audio-controls">
+                    <button id="playPauseBtn"><i class="fas fa-play"></i></button>
+                    <button id="stopBtn"><i class="fas fa-stop"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="myAudio" src="The Rain -Kita dan Ketidakmungkinan.mp3"></audio>
+
+    <script>
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const myAudio = document.getElementById('myAudio');
+        const progressBar = document.getElementById('progressBar');
+        const progressContainer = document.getElementById('progressContainer');
+        const heartContainer = document.getElementById('heartContainer');
+        let heartInterval;
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤️'; // Unicode heart symbol
+            heart.style.left = `${Math.random() * 100}%`;
+            heartContainer.appendChild(heart);
+            setTimeout(() => {
+                heart.remove();
+            }, 4000); // Menghapus hati setelah animasinya selesai
+        }
+        
+        // Mengubah ikon tombol Play/Pause & memulai animasi hati
+        myAudio.addEventListener('play', () => {
+            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            heartContainer.style.display = 'block';
+            if (!heartInterval) {
+                heartInterval = setInterval(createHeart, 500); // Buat hati setiap 0.5 detik
+            }
+        });
+
+        // Mengubah ikon tombol & menghentikan animasi hati
+        myAudio.addEventListener('pause', () => {
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            if (heartInterval) {
+                clearInterval(heartInterval);
+                heartInterval = null;
+            }
+        });
+
+        // Event listener untuk tombol Play/Pause
+        playPauseBtn.addEventListener('click', () => {
+            if (myAudio.paused) {
+                myAudio.play();
+            } else {
+                myAudio.pause();
+            }
+        });
+
+        // Event listener untuk tombol Stop
+        stopBtn.addEventListener('click', () => {
+            myAudio.pause();
+            myAudio.currentTime = 0;
+        });
+
+        // Memperbarui progress bar saat lagu berjalan
+        myAudio.addEventListener('timeupdate', () => {
+            const progress = (myAudio.currentTime / myAudio.duration) * 100;
+            progressBar.style.width = `${progress}%`;
+        });
+        
+        // Memungkinkan pengguna melompat ke bagian lagu tertentu
+        progressContainer.addEventListener('click', (e) => {
+            const containerWidth = progressContainer.clientWidth;
+            const clickX = e.offsetX;
+            const percentage = (clickX / containerWidth);
+            myAudio.currentTime = percentage * myAudio.duration;
+        });
+
+        // Saat lagu selesai, reset tombol, progress bar, dan animasi
+        myAudio.addEventListener('ended', () => {
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            progressBar.style.width = '0%';
+            if (heartInterval) {
+                clearInterval(heartInterval);
+                heartInterval = null;
+            }
+            heartContainer.style.display = 'none';
+        });
+    </script>
+
+</body>
+</html>
